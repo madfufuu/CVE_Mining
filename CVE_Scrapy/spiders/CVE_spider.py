@@ -2,6 +2,7 @@ import scrapy
 import csv
 import os
 import pandas as pd
+import datetime
 
 
 """
@@ -22,7 +23,7 @@ class CVE_spider(scrapy.Spider):
     name = "CVE_gold_miner"
 
     def start_requests(self):
-        path = "CVE_Dataset.csv" # Replace with absolute path
+        path = "/Users/yun/Desktop/OneDrive - The University of Texas at Dallas/work/mscs/Spring21/CVE Mining/CVE_Dataset.csv" # Replace with absolute path
         CVE_Mining_Dataset = pd.read_csv(path)
         CVE_IDs = CVE_Mining_Dataset["CVE-ID"].tolist()
         baseUrl = "https://cve.mitre.org/cgi-bin/cvename.cgi?name="
@@ -40,17 +41,20 @@ class CVE_spider(scrapy.Spider):
     def parse(self, response, url, baseUrl):
         CVE_ID = response.css("h2::text").extract()
         CVE_Link = [baseUrl + url]
-        description = response.css("tr:nth-child(4) td::text").extract()
+        description = [response.css("tr:nth-child(4) td::text").extract()[0].strip()]
         reference_links = response.css("li a::attr(href)").getall()
+        reference_links = [element.strip() for element in reference_links]
 
         CVE_record = CVE_ID + CVE_Link + description + reference_links
 
         # Output to csv
-        oFilePath = "CVE_Miner_output.csv" # Replace with absolute path
-        with open(oFilePath, "a", newline="") as csvfile:
+        oFilePath = "/Users/yun/Desktop/OneDrive - The University of Texas at Dallas/work/mscs/Spring21/CVE Mining/" # Replace with absolute path
+        today = datetime.date.today()
+        oFileName = "CVE_Miner_output_batch" + str(today.month) + "-" + str(today.day) + "-" + str(today.year) + ".csv"
+        with open(oFilePath + oFileName, "a", newline="") as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL, escapechar="\\")
-            if os.stat(oFilePath).st_size == 0:
-                writer.writerow(["CVE_ID", "CVE_Link", "Description", "Reference_Link"])
+            if os.stat(oFilePath+oFileName).st_size == 0:
+                writer.writerow(["CVE_ID", "CVE_Link", "Description"]+["Reference_Link"]*20)
             writer.writerow(CVE_record)
 
     # Request error handeling
