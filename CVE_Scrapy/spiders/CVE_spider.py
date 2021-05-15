@@ -23,7 +23,7 @@ class CVE_spider(scrapy.Spider):
     name = "CVE_gold_miner"
 
     def start_requests(self):
-        path = "/Users/yun/Desktop/OneDrive - The University of Texas at Dallas/work/mscs/Spring21/CVE Mining/CVE_Dataset.csv" # Replace with absolute path
+        path = "/Users/yun/Desktop/OneDrive - The University of Texas at Dallas/work/mscs/Spring21/CVE Mining/CVE_Dataset_3.csv" # Replace with absolute path
         CVE_Mining_Dataset = pd.read_csv(path)
         CVE_IDs = CVE_Mining_Dataset["CVE-ID"].tolist()
         baseUrl = "https://cve.mitre.org/cgi-bin/cvename.cgi?name="
