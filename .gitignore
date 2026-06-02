@@ -3,3 +3,27 @@
 .csv
 .excel
 __pycache__/
+
+# Environment and secrets
+.env
+*.env
+!.env.template
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Reports
+cve_report_*.json
+cve_report_*.html
+example_report.*
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
