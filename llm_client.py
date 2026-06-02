@@ -9,6 +9,17 @@ from enum import Enum
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 
+# Import model configurations if available
+try:
+    from model_config import AnthropicModel, OpenAIModel, get_model_profile
+except ImportError:
+    # Fallback if model_config not available
+    class AnthropicModel:
+        OPUS_4_6 = "claude-opus-4-20250514"
+        SONNET_4_6 = "claude-sonnet-4-20250514"
+    class OpenAIModel:
+        GPT_4O = "gpt-4o"
+
 
 class LLMProvider(Enum):
     """Supported LLM providers"""
@@ -88,7 +99,9 @@ class LLMClient:
     def _get_default_model(self) -> str:
         """Get recommended default model for each provider"""
         if self.provider == LLMProvider.ANTHROPIC:
-            return "claude-sonnet-4-20250514"  # Claude Sonnet 4.6
+            # Claude Opus 4.6 - Most powerful for deep security analysis
+            # Alternative: "claude-sonnet-4-20250514" for faster/cheaper scans
+            return "claude-opus-4-20250514"  # Claude Opus 4.6
         elif self.provider == LLMProvider.OPENAI:
             return "gpt-4o"  # GPT-4o
         else:

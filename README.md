@@ -79,9 +79,26 @@ Output:
 
 Based on 2026 research, LLM models have proven to be **~3x more effective** than traditional rule-based static analysis tools at detecting vulnerabilities. Our implementation supports multiple leading models:
 
-- **Claude Sonnet 4.6** (Recommended) - F3 score: 51.7 on RealVuln benchmark
-- **GPT-4o / GPT-5.5** - Strong performance, widely available
-- **Multi-model consensus** - For production environments requiring high confidence
+- **Claude Opus 4.6** (DEFAULT) - Best-in-class accuracy for critical applications
+- **Claude Sonnet 4.6** - Excellent balance for production use  
+- **GPT-4o / GPT-5.5** - Strong alternative when Anthropic unavailable
+- **Multi-model consensus** - Highest confidence for critical systems
+
+### Model Selection
+
+The system now defaults to **Claude Opus 4.6** for maximum security coverage. See [OPUS_GUIDE.md](OPUS_GUIDE.md) for detailed guidance on model selection.
+
+**Quick Model Comparison:**
+```bash
+# View detailed model comparison
+python model_config.py
+```
+
+| Model | Speed | Cost | Accuracy | Best For |
+|-------|-------|------|----------|----------|
+| **Opus 4.6** | Slow | High | ⭐⭐⭐⭐⭐ Best | Critical apps, security audits |
+| **Sonnet 4.6** | Medium | Medium | ⭐⭐⭐⭐ Better | CI/CD, regular scans |
+| **Sonnet 3.7** | Fast | Low | ⭐⭐⭐ Good | Development, triage |
 
 ### Setup
 
@@ -118,11 +135,28 @@ python -c "from cve_detector import CVEDetector; print('✓ Setup successful')"
 
 ### Usage
 
-#### Quick Start - Scan a Single File
+#### Quick Start - Scan with Claude Opus 4.6 (Best Accuracy)
+```python
+from cve_detector_opus import create_opus_detector
+
+# Initialize with Claude Opus 4.6 (default)
+detector = create_opus_detector()
+
+# Scan a file
+result = detector.scan_file("app.py")
+
+# View findings
+for finding in result.findings:
+    print(f"[{finding.severity}] {finding.vulnerability_type}")
+    print(f"  Location: {finding.location}")
+    print(f"  Fix: {finding.recommendation}\n")
+```
+
+#### Quick Start - Standard Usage (Original)
 ```python
 from cve_detector import CVEDetector
 
-# Initialize detector (automatically uses best available model)
+# Initialize detector (uses best available model)
 detector = CVEDetector()
 
 # Scan a single file
@@ -154,7 +188,13 @@ print(f"Analysis complete: {report.summary}")
 
 #### Command Line Usage
 ```bash
-# Scan current directory
+# Scan with Claude Opus 4.6 (best accuracy)
+python cve_detector_opus.py .
+
+# View model comparison
+python model_config.py
+
+# Scan with default configuration
 python cve_detector.py .
 
 # Scan specific directory
@@ -162,6 +202,34 @@ python cve_detector.py /path/to/project
 
 # Scan single file
 python cve_detector.py myapp.py
+```
+
+#### Model Selection
+```python
+from llm_client import LLMClient, LLMProvider
+from model_config import AnthropicModel
+from cve_detector import CVEDetector
+
+# Use Claude Opus 4.6 (best accuracy)
+client = LLMClient(
+    provider=LLMProvider.ANTHROPIC,
+    model=AnthropicModel.OPUS_4_6.value
+)
+detector = CVEDetector(llm_client=client)
+
+# Use Claude Sonnet 4.6 (balanced)
+client = LLMClient(
+    provider=LLMProvider.ANTHROPIC,
+    model=AnthropicModel.SONNET_4_6.value
+)
+detector = CVEDetector(llm_client=client)
+
+# Use Claude Sonnet 3.7 (fast)
+client = LLMClient(
+    provider=LLMProvider.ANTHROPIC,
+    model=AnthropicModel.SONNET_3_7.value
+)
+detector = CVEDetector(llm_client=client)
 ```
 
 #### Advanced: Multi-Model Consensus

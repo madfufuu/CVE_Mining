@@ -23,10 +23,19 @@ As of June 2026, Large Language Models have become highly effective at detecting
   - Strong at structured vulnerability triage
   - Good for binary reverse engineering
 
-### 3. **Claude Opus 4.7** (Anthropic)
-- **Availability**: Enterprise/verified security teams
-- **Performance**: Best-in-class for deep analysis
-- **Limitations**: Higher cost, 27% repo failure rate under time constraints
+### 3. **Claude Opus 4.6/4.7** (Anthropic) - PREMIUM CHOICE
+- **Availability**: Generally available (4.6), Enterprise for 4.7
+- **Performance**: Best-in-class for deep security analysis
+- **Strengths**:
+  - Most powerful reasoning capabilities
+  - Excellent for complex vulnerability chains
+  - Best for critical application audits
+  - Superior at detecting subtle logic flaws
+- **Considerations**: 
+  - Higher cost per analysis
+  - Slower than Sonnet (deeper analysis)
+  - 27% repo failure rate under strict time constraints (compensated by accuracy)
+  - Recommended for high-value targets and comprehensive audits
 
 ### 4. **Specialized Scanners**
 - **Kolega.Dev**: F3 score of 73.0 (best specialized tool)
@@ -53,18 +62,40 @@ As of June 2026, Large Language Models have become highly effective at detecting
 
 ## Recommendation for Implementation
 
+### For Critical/High-Value Applications
+
+**Primary**: Use **Claude Opus 4.6** via Anthropic API
+- **BEST** accuracy and depth of analysis
+- Superior at detecting complex vulnerability chains
+- Excellent for comprehensive security audits
+- Recommended for: Financial systems, healthcare, critical infrastructure
+
+### For Regular Production Use
+
 **Primary**: Use **Claude Sonnet 4.6** via Anthropic API
 - Best balance of performance, availability, and cost
 - Proven track record in production environments
 - Strong contextual understanding
+- Recommended for: CI/CD integration, regular scans, most applications
 
-**Alternative**: OpenAI GPT-4o or GPT-5.5
-- Widely available and well-documented
-- Good performance for most use cases
+### For Development/Testing
 
-**Production Approach**:
-- Implement flexible provider system (support both Anthropic and OpenAI)
-- Consider multi-model validation for critical codebases
+**Alternative**: Use **Claude Sonnet 3.7** or OpenAI GPT-4o
+- Faster for quick feedback
+- Lower cost for frequent scanning
+- Good for initial triage
+
+### Production Approach
+
+**Tiered Strategy**:
+1. **Initial Triage**: Sonnet 3.7 for fast broad scanning
+2. **Deep Analysis**: Opus 4.6 for flagged areas and critical code
+3. **Validation**: Multi-model consensus for high-confidence findings
+
+**Implementation**:
+- Flexible provider system (support both Anthropic and OpenAI)
+- Model selection based on use case and budget
+- Multi-model validation for critical codebases
 - Human review required for all findings
 
 ## References
